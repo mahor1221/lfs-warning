@@ -87,23 +87,28 @@ async function run() {
     if (lsfFiles.length > 0) {
       core.info('Detected file(s) that should be in LFS: ');
       core.info(lsfFiles.join('\n'));
+      
+      const send_comment = core.getInput('sendComment');
+      if (send_comment === "" || send_comment === "true") {
+        const body = getCommentBody(
+          largeFiles,
+          accidentallyCheckedInLsfFiles,
+          fsl
+        );
 
-      const body = getCommentBody(
-        largeFiles,
-        accidentallyCheckedInLsfFiles,
-        fsl
-      );
-
-      await Promise.all([
-        octokit.rest.issues.addLabels({
-          ...issueBaseProps,
-          labels: [labelName],
-        }),
-        octokit.rest.issues.createComment({
-          ...issueBaseProps,
-          body,
-        }),
-      ]);
+        await Promise.all([
+          octokit.rest.issues.addLabels({
+            ...issueBaseProps,
+            labels: [labelName],
+          }),
+          octokit.rest.issues.createComment({
+            ...issueBaseProps,
+            body,
+          }),
+        ]);
+      } else if (send_comment !== "false") {
+        throw new Error("sendComment must be either true or false");
+      }
 
       core.setOutput('lfsFiles', lsfFiles);
       core.setFailed(
