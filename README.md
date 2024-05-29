@@ -41,6 +41,12 @@ Optional. A newline delimited list of glob patterns that match checked in files 
 
 Optional. The name of the label, defaults to lfs-detected!
 
+### `sendComment`
+
+Optional. If set to false, disables sending comments.
+
+Default `true`.
+
 ### `labelColor`
 
 Optional. The color of the label, defaults to ff1493.
